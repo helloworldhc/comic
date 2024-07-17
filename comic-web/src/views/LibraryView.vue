@@ -161,6 +161,7 @@ const deleteLibrary = async (id: number) => {
 <template>
   <div style="padding: 5px">
     <div style="display: flex;">
+      <el-text style="margin-left: 0;">漫画库</el-text>
       <el-button type="primary" color="white" style="margin: auto 0px auto auto;" @click="createLibraryDialog = true"
         circle>
         <el-icon size="15">
@@ -169,7 +170,7 @@ const deleteLibrary = async (id: number) => {
       </el-button>
       <el-button type="primary" color="white" style="margin-right: 10px;" circle>
         <el-icon size="15">
-          <Operation />
+          <More />
         </el-icon>
       </el-button>
     </div>

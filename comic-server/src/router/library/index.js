@@ -109,6 +109,9 @@ router.put('/:id/refresh',
  * @api {get} /libraries/:id 获取漫画库内容
  * @apiGroup Library
  * @apiParam {number} id 漫画库id
+ * @apiQuery {number=1,2,3} [progress] 1未读，2进行中，3已完成
+ * @apiQuery {string='name', 'createTime', 'size'} [orderBy='name']
+ * @apiQuery {number=-1,1} [order=1] 1升序，-1降序
  * @apiQuery {number} [page=1]
  * @apiQuery {number} [pageSize=10]
  * @apiSuccessExample {json} Success-Response:
@@ -137,13 +140,16 @@ router.put('/:id/refresh',
 router.get('/:id',
   validate({
     query: {
+      progress: joi.number().valid(1, 2, 3),
+      orderBy: joi.string().valid('name', 'size', 'createTime').default('name'),
+      order: joi.number().valid(-1, 1).default(1),
       page: joi.number().default(1),
       pageSize: joi.number().default(10)
     }
   }),
   async ctx => {
-    const { page, pageSize } = ctx.query;
-    ctx.body = await LibraryApi.getLibraryContent(ctx.params.id, page, pageSize);
+    const { progress, orderBy, order, page, pageSize } = ctx.query;
+    ctx.body = await LibraryApi.getLibraryContent(ctx.params.id, progress, orderBy, order, page, pageSize);
   }
 );
 

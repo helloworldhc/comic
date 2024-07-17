@@ -121,7 +121,31 @@ module.exports = class LibraryApi {
     return {};
   }
 
-  static async getLibraryContent(id, page, pageSize) {
+  static async getLibraryContent(id, progress, orderBy, order, page, pageSize) {
+    let baseSql = `
+    FROM comic AS a
+    LEFT JOIN reading_progress AS b ON a.id = b.comic_id
+    WHERE a.library_id = ?`;
+    if (progress !== undefined) {
+      switch (progress) {
+        case 1:
+          baseSql += ' AND b.comic_id IS NULL';
+          break;
+        case 2:
+          baseSql += ' AND (b.comic_id IS NOT NULL AND b.finished = 0)';
+          break;
+        case 3:
+          baseSql += ' AND b.finished = 1';
+          break;
+        default:
+          break;
+      }
+    }
+
+    let orderStr = 'ORDER BY name';
+    if (orderBy !== undefined) {
+      orderStr = `ORDER BY ${orderBy} ${order === 1 ? 'ASC' : 'DESC'}`;
+    }
     const [library, comics, count] = await Promise.all([
       queryOne(`
       SELECT id, name, cover, comic_count AS comicCount, library_path AS path, last_visit_time AS lastVisitTime
@@ -130,12 +154,10 @@ module.exports = class LibraryApi {
       query(`
       SELECT a.id, a.file_name AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,
         IFNULL(b.page, 0) AS readingProgress, IFNULL(b.finished, 0) AS finished, b.last_time AS lastTime
-      FROM comic AS a
-      LEFT JOIN reading_progress AS b ON a.id = b.comic_id
-      WHERE a.library_id = ?
-      ORDER BY a.file_name
+      ${baseSql}
+      ${orderStr} 
       LIMIT ?, ?`, [id, (page - 1) * pageSize, pageSize]),
-      queryOne('SELECT COUNT(*) AS comicCount FROM comic WHERE library_id = ?', [id]),
+      queryOne(`SELECT COUNT(*) AS comicCount ${baseSql}`, [id]),
     ]);
     return { ...library, cover: getCoverUrl(library.cover), comics: comics.map(v => Object.assign(v, { cover: getCoverUrl(v.cover) })), ...count };
   }
