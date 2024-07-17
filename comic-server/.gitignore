@@ -1,0 +1,4 @@
+config/dev*
+node_modules
+doc
+.vscode

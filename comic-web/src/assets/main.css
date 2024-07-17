@@ -1,0 +1,9 @@
+@import './base.css';
+
+.card {
+  .el-card__body {
+    padding: 2px;
+  }
+
+  position: relative;
+}

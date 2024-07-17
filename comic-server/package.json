@@ -1,0 +1,37 @@
+{
+  "name": "comic-server",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "NODE_ENV=dev nodemon src/index.js",
+    "doc": "apidoc -i src/router -o doc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@koa/router": "^12.0.1",
+    "adm-zip": "^0.5.14",
+    "config": "^3.3.12",
+    "ioredis": "^5.4.1",
+    "joi": "^17.13.3",
+    "koa": "^2.15.3",
+    "koa-bodyparser": "^4.4.1",
+    "mysql2": "^3.10.2"
+  },
+  "devDependencies": {
+    "@types/koa__router": "^12.0.4",
+    "@types/node": "^20.14.10",
+    "apidoc": "^1.2.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.1.4"
+  },
+  "apidoc": {
+    "title": "comic restful api",
+    "url": "http://127.0.0.1:3000",
+    "version": "1.0.0"
+  }
+}

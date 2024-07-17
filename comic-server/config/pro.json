@@ -1,0 +1,22 @@
+{
+  "app": {
+    "host":"127.0.0.1",
+    "port": 3000,
+    "coverDir":"/app/cover",
+    "coverHost":"/cover"
+  },
+  "mysql": {
+    "host": "mysql",
+    "port": 3306,
+    "user": "comic",
+    "password": "comic",
+    "database": "comic",
+    "namedPlaceholders": true
+  },
+  "redis":{
+    "host":"redis",
+    "port":6379,
+    "username":"",
+    "password":"comic"
+  }
+}

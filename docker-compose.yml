@@ -1,0 +1,47 @@
+version: '2'
+services:
+  mysql:
+    container_name: comic-mysql
+    restart: always
+    image: mysql:8.4
+    ports:
+      - 23306:3306
+    environment:
+      - MYSQL_DATABASE=comic
+      - MYSQL_ROOT_PASSWORD=comic
+      - MYSQL_USER=comic
+      - MYSQL_PASSWORD=comic
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /path/to/mysql:/var/lib/mysql
+  redis:
+    container_name: comic-redis
+    restart: always
+    image: redis:7
+    ports:
+      - 26379:6379
+    command: [ "redis-server", "--requirepass", "comic" ]
+  server:
+    container_name: comic-server
+    restart: always
+    image: comic-server:latest
+    build:
+      context: ./comic-server
+    ports:
+      - 23000:3000
+    volumes:
+      - /path/to/store/cover:/app/cover
+      - /path/to/comic:/data
+  web:
+    container_name: comic-web
+    restart: always
+    image: comic-web:latest
+    build:
+      context: ./comic-web
+    ports:
+      - 3001:80
+    volumes:
+      - /path/to/store/cover:/app/cover
+networks:
+  default:
+    name: comic-network
