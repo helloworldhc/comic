@@ -15,6 +15,15 @@ const libraryClicked = () => {
   router.push({ name: 'libraryComic', params: { id: props.id } })
 }
 
+const editIconClicked = (e: MouseEvent) => {
+  e.stopPropagation();
+  emit('editClicked', props.id)
+}
+
+const moreIconClicked = (e: MouseEvent) => {
+  e.stopPropagation();
+}
+
 const libraryDropDown = (command: string) => {
   switch (command) {
     case 'refresh': {
@@ -38,12 +47,12 @@ const libraryDropDown = (command: string) => {
       <div style="position: absolute; top: 0px; right: 0px; background-color: orange;">
         <el-text style="color: white;padding: 5px;">{{ comicCount }}</el-text>
       </div>
-      <el-icon id="editIcon" size=28 @click="emit('editClicked', id)">
+      <el-icon id="editIcon" size=28 @click="editIconClicked">
         <Edit />
       </el-icon>
 
       <el-dropdown trigger="click" @command="libraryDropDown">
-        <el-icon size=28>
+        <el-icon size=28 @click="moreIconClicked">
           <More />
         </el-icon>
         <template #dropdown>
