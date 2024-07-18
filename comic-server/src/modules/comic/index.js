@@ -3,6 +3,20 @@ const { getCoverUrl } = require("../../utils/staticFiles");
 const { getImageBufferOfZip } = require("../../utils/zipUtils");
 
 module.exports = class ComicApi {
+  static async getComics(search) {
+    const searchStr = `%${search}%`;
+    const comics = await query(`
+      SELECT a.id, a.file_name AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,
+        IFNULL(b.page, 0) AS readingProgress, IFNULL(b.finished, 0) AS finished, b.last_time AS lastTime,
+        c.id AS libraryId, c.name AS libraryName
+      FROM comic AS a
+      LEFT JOIN reading_progress AS b ON a.id = b.comic_id
+      JOIN library AS c ON a.library_id = c.id
+      WHERE a.file_name LIKE ?
+      ORDER BY name`, [searchStr]);
+    return { comics: comics.map(v => ({ ...v, cover: getCoverUrl(v.cover) })) };
+  }
+
   static async getComic(id) {
     const comic = await queryOne(`
       SELECT a.id, a.file_name AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,

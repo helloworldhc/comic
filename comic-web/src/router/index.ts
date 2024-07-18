@@ -4,6 +4,7 @@ import MainView from '../views/MainView.vue';
 const LibraryComicView = () => import('../views/LibraryComicView.vue')
 const ComicView = () => import('../views/ComicView.vue')
 const ComicReadingView = () => import('../views/ComicReadingView.vue')
+const SearchResultView = () => import('../views/SearchResultView.vue')
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -22,6 +23,11 @@ const router = createRouter({
       path: '/libraries/:id/comic/:comicId',
       name: 'comic',
       component: ComicView,
+    }, {
+      path: '/search/:search',
+      name: 'searchResult',
+      component: SearchResultView,
+      props: true
     }]
   }, {
     path: '/comic/:id/read',

@@ -43,7 +43,7 @@ const libraryDropDown = (command: string) => {
 <template>
   <el-card style="width: 150px; height: 250px;" class="card">
     <div id="libraryDiv" @click="libraryClicked">
-      <el-image style="width: 150px; height: 214px" :src="cover" />
+      <el-image style="width: 150px; height: 214px" :src="cover" fit="contain" />
       <div style="position: absolute; top: 0px; right: 0px; background-color: orange;">
         <el-text style="color: white;padding: 5px;">{{ comicCount }}</el-text>
       </div>

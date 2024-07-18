@@ -24,13 +24,20 @@ const router = new Router();
  *      "readingProgress":1, // 阅读进度，范围为1~pageCount
  *      "finished":1,
  *      "lastTime":"xx", // 上次观看时间
+ *      "libraryId":1,
+ *      "libraryName":"x"
  *    }],
- *    "comicCount":1
  * }
  */
-router.get('/', async (ctx) => {
-  ctx.body = {};
-});
+router.get('/',
+  validate({
+    query: {
+      search: joi.string().required()
+    }
+  }),
+  async (ctx) => {
+    ctx.body = await ComicApi.getComics(ctx.query.search);
+  });
 
 /**
  * @api {get} /comics/:id 获取漫画信息

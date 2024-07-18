@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Back, Search } from '@element-plus/icons-vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const emit = defineEmits(['foldAside'])
+const router = useRouter();
 
 const searchText = ref('')
 
@@ -11,6 +13,10 @@ const isFolded = ref(false)
 const foldAside = () => {
   emit('foldAside', !isFolded.value);
   isFolded.value = !isFolded.value;
+}
+
+const onInputChange = (search: string) => {
+  router.push({ name: 'searchResult', params: { search } })
 }
 
 </script>
@@ -24,7 +30,7 @@ const foldAside = () => {
     </div>
 
     <el-input style="position: absolute;left: 56px;top: 6px;height: 44px; width: calc(100% - 59px)" v-model="searchText"
-      :suffix-icon="Search">输入框</el-input>
+      :suffix-icon="Search" @change="onInputChange">输入框</el-input>
   </el-card>
 </template>
 
@@ -33,5 +39,9 @@ const foldAside = () => {
   .el-card__body {
     padding: 0px;
   }
+}
+
+.el-input .el-input__icon {
+  font-size: 20px;
 }
 </style>

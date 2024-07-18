@@ -52,6 +52,26 @@ const goNextComic = () => {
 
 }
 
+const goNext = () => {
+  if (comic.value && page.value) {
+    if (page.value < comic.value?.pageCount) {
+      page.value++;
+    } else {
+      goPreComic();
+    }
+  }
+}
+
+const goPre = () => {
+  if (page.value) {
+    if (page.value > 1) {
+      page.value--;
+    } else {
+      goPreComic();
+    }
+  }
+}
+
 const onSlideChange = (value: number[]) => {
   console.log('change', value)
 }
@@ -59,9 +79,17 @@ const onSlideChange = (value: number[]) => {
 const onMouseClick = (event: MouseEvent) => {
   if (parentDiv.value) {
     const { clientWidth, clientHeight } = parentDiv.value;
-    if ((event.y > 50 && event.y < clientHeight - 50) && (event.x > clientWidth / 3 && event.x < 2 * clientWidth / 3)) {
-      showTopMenu.value = !showTopMenu.value;
-      showBottomMenu.value = !showBottomMenu.value;
+    if (event.y > 50 && event.y < clientHeight - 50) {
+      const leftDivider = clientWidth / 3;
+      const rightDivider = 2 * clientWidth / 3;
+      if (event.x > leftDivider && event.x < rightDivider) {
+        showTopMenu.value = !showTopMenu.value;
+        showBottomMenu.value = !showBottomMenu.value;
+      } else if (event.x <= leftDivider) {
+        goPre();
+      } else {
+        goNext();
+      }
     }
   }
 }
@@ -69,23 +97,10 @@ const onMouseClick = (event: MouseEvent) => {
 const onKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
     case 'ArrowLeft':
-      if (page.value) {
-        if (page.value > 1) {
-          page.value--;
-        } else {
-          goPreComic();
-        }
-      }
-
+      goPre();
       break;
     case 'ArrowRight':
-      if (comic.value && page.value) {
-        if (page.value < comic.value?.pageCount) {
-          page.value++;
-        } else {
-          goPreComic();
-        }
-      }
+      goNext();
       break;
     default:
       break

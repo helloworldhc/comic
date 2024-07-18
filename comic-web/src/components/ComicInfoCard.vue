@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import type { Comic } from '../types/entities';
 import { Reading } from '@element-plus/icons-vue';
 
 const props = defineProps<Comic & { libraryId: number }>()
-const emit = defineEmits<{
-  readingClicked: [id: number]
-}>()
+
+const router = useRouter();
+
+const readingClicked = () => {
+  router.push({ name: 'comicRead', params: { id: props.id } });
+}
 </script>
 
 <template>
@@ -16,7 +20,7 @@ const emit = defineEmits<{
         <div id="progressDiv" :style="{ width: `${((readingProgress / pageCount) * 100).toFixed(2)}%` }" />
       </div>
 
-      <el-icon size=56 @click="emit('readingClicked', id)">
+      <el-icon size=56 @click="readingClicked">
         <Reading />
       </el-icon>
     </div>

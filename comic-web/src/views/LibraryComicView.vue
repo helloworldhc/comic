@@ -64,10 +64,6 @@ const backToLibraries = () => {
   router.push({ name: 'libraries' })
 }
 
-const readingClicked = (id: number) => {
-  router.push({ name: 'comicRead', params: { id } })
-}
-
 const sortItemClicked = (i: number) => {
   if (sortIcon.value[i].visibility === 'hidden') {
     sortIcon.value[i].visibility = 'visible';
@@ -115,7 +111,7 @@ const sortItemClicked = (i: number) => {
   <el-space size="large" style="margin: 5px 10px;" wrap>
     <ComicInfoCard v-for="item in comics" :name="item.name" :cover="item.cover" :id="item.id" :key="item.id"
       :finished="item.finished" :page-count="item.pageCount" :reading-progress="item.readingProgress"
-      :create-time="item.createTime" :libraryId="+route.params.id" @reading-clicked="readingClicked" />
+      :create-time="item.createTime" :libraryId="+route.params.id" />
   </el-space>
 
   <el-drawer id="comicDrawer" v-model="drawerVModel" size="250px">
