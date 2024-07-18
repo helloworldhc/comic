@@ -11,7 +11,7 @@ const router = new Router();
 /**
  * @api {get} /comics 获取漫画
  * @apiGroup Comic
- * @apiParam {string} search 搜索内容
+ * @apiQuery {string} search 搜索内容
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
@@ -60,7 +60,6 @@ router.get('/',
  *    "authors":["x"].
  *    "properties":[{
  *      "name":"xxx",
- *      "type":"string", // 类型为string或number
  *      "values":["x"], // type为number时为[1,2,3]
  *    }]
  * }
@@ -73,20 +72,29 @@ router.get('/:id', async (ctx) => {
  * @api {put} /comics/:id 编辑漫画信息
  * @apiGroup Comic
  * @apiParam {number} id 漫画id
- * @apiBody {string} name
  * @apiBody {string[]} authors
- * @apiBody {object[]} properties 漫画属性，通过name, type, values可以定义自己需要的漫画信息
+ * @apiBody {object[]} properties 漫画属性，通过name, values可以定义自己需要的漫画信息
  * @apiBody {string} properties.name
- * @apiBody {string='string', 'number'} properties.type
  * @apiBody {array} properties.values
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
  * {
  * }
  */
-router.put('/:id', async (ctx) => {
-  ctx.body = {};
-});
+router.put('/:id',
+  validate({
+    body: {
+      authors: joi.array().items(joi.string().required()).default([]),
+      properties: joi.array().items(joi.object({
+        name: joi.string().required(),
+        values: joi.array().items(joi.string().required()).required(),
+      })).default([])
+    }
+  }),
+  async (ctx) => {
+    const {authors, properties} = ctx.request.body;
+    ctx.body = await ComicApi.editComic(ctx.params.id, authors, properties);
+  });
 
 /**
  * @api {get} /comics/:id/progress 获取漫画阅读进度

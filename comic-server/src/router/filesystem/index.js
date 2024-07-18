@@ -10,7 +10,7 @@ const router = new Router();
 
 /**
  * @api {get} /filesystem 获取文件系统
- * @apiGroup Comic
+ * @apiGroup FileSystem
  * @apiQuery {string} dir 文件夹
  * @apiSuccessExample {json} Success-Response:
  * HTTP/1.1 200 OK
