@@ -70,7 +70,6 @@ const jumpToChildDir = (child: string) => {
 const createLibraryRequest = async () => {
   try {
     const result = await axios.post<{ code: Number, data: { id: number, comicCount: number } }>(Api.CREATE_LIBRARY_URL, { name: libraryForm.name, path: libraryForm.path });
-    console.log('result', result.data)
     if (result.data.code !== 0) {
       switch (result.data.code) {
         case errorType.System_Path_Not_Exist:
@@ -103,7 +102,6 @@ const updateLibraryRequest = async () => {
 
     const libraryInLibraries = libraries.value.find(v => v.id === editLibraryId.value);
     if (libraryInLibraries) {
-      console.log('libraryInLibraries', libraryInLibraries)
       libraryInLibraries.name = libraryForm.name;
     }
     createLibraryDialog.value = false;
@@ -183,8 +181,7 @@ const deleteLibrary = async (id: number) => {
   </el-space>
 
   <el-dialog v-model="createLibraryDialog" :title="libraryDialogTitle" width="500">
-    <el-form :model="libraryForm" ref="ruleFormRef" status-icon style="width: 450px;" :rules="libraryRules"
-      @validate="() => console.log('validate')">
+    <el-form :model="libraryForm" ref="ruleFormRef" status-icon style="width: 450px;" :rules="libraryRules">
       <el-form-item label="名称" label-position="top" prop="name">
         <el-input v-model="libraryForm.name" />
       </el-form-item>

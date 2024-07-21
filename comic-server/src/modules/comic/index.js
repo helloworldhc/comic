@@ -6,13 +6,13 @@ module.exports = class ComicApi {
   static async getComics(search) {
     const searchStr = `%${search}%`;
     const comics = await query(`
-      SELECT a.id, a.file_name AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,
+      SELECT a.id, IFNULL(a.name, a.file_name) AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,
         IFNULL(b.page, 0) AS readingProgress, IFNULL(b.finished, 0) AS finished, b.last_time AS lastTime,
         c.id AS libraryId, c.name AS libraryName
       FROM comic AS a
       LEFT JOIN reading_progress AS b ON a.id = b.comic_id
       JOIN library AS c ON a.library_id = c.id
-      WHERE a.file_name LIKE ?
+      WHERE name LIKE ?
       ORDER BY name`, [searchStr]);
     return { comics: comics.map(v => ({ ...v, cover: getCoverUrl(v.cover) })) };
   }
@@ -20,7 +20,7 @@ module.exports = class ComicApi {
   static async getComic(id) {
     const [comic, properties] = await Promise.all([
       queryOne(`
-        SELECT a.id, a.file_name AS name, a.file_size AS size, a.cover, IFNULL(a.authors, JSON_ARRAY()) AS authors,
+        SELECT a.id, IFNULL(a.name, a.file_name) AS name, a.file_size AS size, a.cover, IFNULL(a.authors, JSON_ARRAY()) AS authors,
           a.page_count AS pageCount, a.create_time AS createTime,
           IFNULL(b.page, 0) AS readingProgress, IFNULL(b.finished, 0) AS finished, b.last_time AS lastTime,
           c.id AS libraryId, c.name AS libraryName
@@ -49,9 +49,9 @@ module.exports = class ComicApi {
     return comic;
   }
 
-  static async editComic(id, authors, properties) {
+  static async editComic(id, name, authors, properties) {
     await transaction(async tQuery => {
-      await tQuery('UPDATE comic SET authors = ? WHERE id = ?', [JSON.stringify(authors), id]);
+      await tQuery('UPDATE comic SET name = ?, authors = ? WHERE id = ?', [name, JSON.stringify(authors), id]);
       const comicPropertyData = [];
       for (const { name, values } of properties) {
         for (const value of values) {
@@ -76,7 +76,7 @@ module.exports = class ComicApi {
 
   static async getComicProgress(id) {
     const comic = await queryOne(`
-      SELECT a.id, a.file_name AS name, a.page_count AS pageCount, 
+      SELECT a.id, IFNULL(a.name, a.file_name) AS name, a.page_count AS pageCount, 
         IFNULL(b.page, 0) AS readingProgress,
         c.id AS libraryId, c.name AS libraryName
       FROM comic AS a

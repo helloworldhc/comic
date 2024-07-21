@@ -152,7 +152,7 @@ module.exports = class LibraryApi {
       FROM library
       WHERE id = ?`, [id]),
       query(`
-      SELECT a.id, a.file_name AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,
+      SELECT a.id, IFNULL(a.name, a.file_name) AS name, a.file_size AS size, a.cover, a.page_count AS pageCount, a.create_time AS createTime,
         IFNULL(b.page, 0) AS readingProgress, IFNULL(b.finished, 0) AS finished, b.last_time AS lastTime
       ${baseSql}
       ${orderStr} 

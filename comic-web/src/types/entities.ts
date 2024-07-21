@@ -18,3 +18,14 @@ export interface Comic {
   lastTime?: string,
   createTime: string
 }
+
+export interface Property {
+  name: string,
+  values: string[],
+}
+
+export type ComicDetail = {
+  name: string,
+  authors: string[],
+  properties: Property[],
+}

@@ -4,6 +4,9 @@ import type { Comic } from '../types/entities';
 import { Reading } from '@element-plus/icons-vue';
 
 const props = defineProps<Comic & { libraryId: number }>()
+const emit = defineEmits<{
+  editClicked: [id: number],
+}>()
 
 const router = useRouter();
 
@@ -20,8 +23,12 @@ const readingClicked = () => {
         <div id="progressDiv" :style="{ width: `${((readingProgress / pageCount) * 100).toFixed(2)}%` }" />
       </div>
 
-      <el-icon size=56 @click="readingClicked">
+      <el-icon id="readingIcon" size=56 @click="readingClicked">
         <Reading />
+      </el-icon>
+
+      <el-icon id="editIcon" size=28 @click="emit('editClicked', id)">
+        <Edit />
       </el-icon>
     </div>
     <RouterLink :to="{ name: 'comic', params: { id: libraryId, comicId: id } }">
@@ -60,7 +67,7 @@ const readingClicked = () => {
   display: none;
 }
 
-#comicDiv:hover i {
+#comicDiv:hover #readingIcon {
   position: absolute;
   display: initial;
   z-index: 200;
@@ -69,6 +76,15 @@ const readingClicked = () => {
   top: 0;
   bottom: 0;
   margin: auto;
+  color: white
+}
+
+#comicDiv:hover #editIcon {
+  position: absolute;
+  display: initial;
+  z-index: 200;
+  right: 20px;
+  bottom: 20px;
   color: white
 }
 

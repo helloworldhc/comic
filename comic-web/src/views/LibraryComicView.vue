@@ -2,11 +2,12 @@
 import { computed, ref, watchEffect } from 'vue';
 import ComicInfoCard from '../components/ComicInfoCard.vue'
 import axios from 'axios';
-import type { Library, Comic } from '../types/entities';
+import type { Library, Comic, ComicDetail } from '../types/entities';
 import { useRoute, useRouter } from 'vue-router';
 import { ArrowDown, Back, RefreshLeft } from '@element-plus/icons-vue'
 import { Api } from '@/types/api';
 import { formatString } from 'typescript-string-operations';
+import EditComicDialog from '@/components/EditComicDialog.vue';
 
 const pageSize = ref(20);
 const currentPage = ref(1);
@@ -84,6 +85,25 @@ const sortItemClicked = (i: number) => {
   }
 }
 
+const comicDetail = ref({ id: 0, name: '', authors: [], properties: [] });
+const showComicEditDialog = ref(false);
+const comicEditClicked = async (id: number) => {
+  const result = await axios.get(formatString(Api.GET_COMIC_DETAIL_URL, id));
+  comicDetail.value = result.data.data;
+  showComicEditDialog.value = true;
+}
+
+const editDialogCancelled = () => {
+  showComicEditDialog.value = false;
+}
+
+const editDialogConfirmed = async (comic: ComicDetail & { id: number }) => {
+  const { id, name, authors, properties } = comic;
+  const result = await axios.put(formatString(Api.GET_COMIC_DETAIL_URL, id), { name, authors, properties });
+  comicDetail.value = result.data.data;
+  showComicEditDialog.value = false;
+}
+
 </script>
 
 <template>
@@ -111,7 +131,7 @@ const sortItemClicked = (i: number) => {
   <el-space size="large" style="margin: 5px 10px;" wrap>
     <ComicInfoCard v-for="item in comics" :name="item.name" :cover="item.cover" :id="item.id" :key="item.id"
       :finished="item.finished" :page-count="item.pageCount" :reading-progress="item.readingProgress"
-      :create-time="item.createTime" :libraryId="+route.params.id" />
+      :create-time="item.createTime" :libraryId="+route.params.id" @editClicked="comicEditClicked" />
   </el-space>
 
   <el-drawer id="comicDrawer" v-model="drawerVModel" size="250px">
@@ -149,6 +169,8 @@ const sortItemClicked = (i: number) => {
       </el-icon>
     </el-button>
   </el-drawer>
+  <EditComicDialog :comic="comicDetail" :show-dialog="showComicEditDialog" @editCancelled="editDialogCancelled"
+    @editConfirmed="editDialogConfirmed" />
 </template>
 
 <style>

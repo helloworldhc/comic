@@ -7,4 +7,6 @@ export enum Api {
   DELETE_LIBRARY_URL = '/api/libraries/{0}',
   GET_FILESYSTEM_URL = '/api/filesystem',
   GET_COMIC_URL = '/api/comics',
+  GET_COMIC_DETAIL_URL = '/api/comics/{0}',
+  EDIT_COMIC_URL = '/api/comics/{0}',
 }

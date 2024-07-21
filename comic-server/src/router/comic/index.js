@@ -72,8 +72,9 @@ router.get('/:id', async (ctx) => {
  * @api {put} /comics/:id 编辑漫画信息
  * @apiGroup Comic
  * @apiParam {number} id 漫画id
- * @apiBody {string[]} authors
- * @apiBody {object[]} properties 漫画属性，通过name, values可以定义自己需要的漫画信息
+ * @apiBody {string} [name]
+ * @apiBody {string[]} [authors]
+ * @apiBody {object[]} [properties] 漫画属性，通过name, values可以定义自己需要的漫画信息
  * @apiBody {string} properties.name
  * @apiBody {array} properties.values
  * @apiSuccessExample {json} Success-Response:
@@ -84,6 +85,7 @@ router.get('/:id', async (ctx) => {
 router.put('/:id',
   validate({
     body: {
+      name: joi.string().default(''),
       authors: joi.array().items(joi.string().required()).default([]),
       properties: joi.array().items(joi.object({
         name: joi.string().required(),
@@ -92,8 +94,8 @@ router.put('/:id',
     }
   }),
   async (ctx) => {
-    const {authors, properties} = ctx.request.body;
-    ctx.body = await ComicApi.editComic(ctx.params.id, authors, properties);
+    const {name, authors, properties} = ctx.request.body;
+    ctx.body = await ComicApi.editComic(ctx.params.id, name, authors, properties);
   });
 
 /**

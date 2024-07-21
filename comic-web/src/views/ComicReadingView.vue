@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, watchEffect } from 'vue';
 import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { Back, DArrowLeft, DArrowRight, MoreFilled } from '@element-plus/icons-vue'
 
 const props = defineProps<{ id: string }>()
@@ -11,7 +11,6 @@ const imageFit = ref('contain')
 const showTopMenu = ref(false)
 const showBottomMenu = ref(false)
 const parentDiv = ref(null)
-// const route = useRoute();
 const router = useRouter();
 const comic = ref<{ id: number, name: string, pageCount: number, readingProgress: number, libraryId: number, librariesName: string }>();
 
@@ -28,8 +27,7 @@ watchEffect(async () => {
 
 watch(page, async (newPage: number | undefined) => {
   const API_UPDATE_PROGRESS_URL = `/api/comics/${props.id}/progress`
-  const result = await axios.put(`${API_UPDATE_PROGRESS_URL}`, { page: newPage });
-  console.log('update progress', result)
+  await axios.put(`${API_UPDATE_PROGRESS_URL}`, { page: newPage });
 })
 
 const imageSrc = computed(() => {
@@ -70,10 +68,6 @@ const goPre = () => {
       goPreComic();
     }
   }
-}
-
-const onSlideChange = (value: number[]) => {
-  console.log('change', value)
 }
 
 const onMouseClick = (event: MouseEvent) => {
@@ -143,8 +137,7 @@ onMounted(() => {
           <DArrowLeft />
         </el-icon>
       </el-button>
-      <el-slider style="margin: 0 15px 0 20px;" v-model="page" :min="1" :max="comic?.pageCount" @change="onSlideChange"
-        size="large" />
+      <el-slider style="margin: 0 15px 0 20px;" v-model="page" :min="1" :max="comic?.pageCount" size="large" />
       <el-text style="margin-right: 10px;">{{ comic?.pageCount }}</el-text>
       <el-button id="nextComic" circle color="white" @click="goNextComic">
         <el-icon size="24">
